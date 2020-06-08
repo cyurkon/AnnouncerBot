@@ -10,4 +10,4 @@ Built for the Tribe B Slack Channel
 
 ## Running
 If using localhost, you will need to use a service like ngrok to forward traffic from Slack to your events url.
-Run this from the command line: 'ngrok http 3000'  'python3 run.py'
+Run this from the command line: `ngrok http 3000` and `python3 run.py`
