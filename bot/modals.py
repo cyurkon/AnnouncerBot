@@ -1,5 +1,5 @@
 # Form sent to caller of /practice. Built using Slack's Block Kit Builder.
-practice_modal = {
+PRACTICE_MODAL = {
     "type": "modal",
     "callback_id": "practice modal",
     "title": {
@@ -134,7 +134,7 @@ practice_modal = {
             },
             "label": {
                 "type": "plain_text",
-                "text": "Special Comments",
+                "text": "Special Comments (if none, \"N\")",
                 "emoji": True
             }
         }
