@@ -1,15 +1,13 @@
+import json
 import os
 from flask import Flask, request, make_response
-import json
-import requests
-from .modals import PRACTICE_MODAL
 from slack import WebClient
-from slack.errors import SlackApiError
+from .modals import PRACTICE_MODAL
 
-client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 app = Flask(__name__)
+client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 
-ANNOUNCEMENTS_CHANNEL_ID = "C014ZBQN82X"
+ANNOUNCEMENTS_CID = "C014ZBQN82X"  # channel ID
 announcements = {}  # Maps users to their partially completed announcements before they are posted to the workspace
 previous_post_ts = []  # Previous post identifiers used for attendance taking
 
@@ -24,28 +22,8 @@ class Announcement:
         self.comments = ""
 
 
-def get_reactions(channel, timestamp):
-    endpt = 'https://slack.com/api/reactions.get'
-    data = {
-        "token": os.environ['SLACK_BOT_TOKEN'],
-        "channel": channel,
-        "timestamp": timestamp
-    }
-    return requests.post(endpt, data=data)
-
-
-def open_view(trigger_id, view):
-    endpt = 'https://slack.com/api/views.open'
-    data = {
-        "token": os.environ['SLACK_BOT_TOKEN'],
-        "trigger_id": trigger_id,
-        "view": view
-    }
-    return requests.post(endpt, data=data)
-
-
 def format_announcement(time, date, location, is_tournament_roster, comments):
-    """Format and return announcement text"""
+    """Formats and returns announcement text"""
     roster = "*TOURNAMENT and RESERVE ROSTER PRACTICE ONLY*\n" if is_tournament_roster else ""
     comments = "" if comments == "N" else comments
     return ("{3}"
@@ -68,7 +46,7 @@ def send_announcement(user):
     message = format_announcement(ann.time, ann.date, ann.location,
                                   ann.is_tournament_roster, ann.comments)
     response = client.chat_postMessage(
-        channel="announcements",
+        channel=ANNOUNCEMENTS_CID,
         text=message
     )
     previous_post_ts.append(response["ts"])
@@ -78,12 +56,15 @@ def send_announcement(user):
 def attendance():
     while previous_post_ts:
         timestamp = previous_post_ts.pop()
-        response = get_reactions(ANNOUNCEMENTS_CHANNEL_ID, timestamp)
-        reactions = response.json()["message"]["reactions"]
+        response = client.reactions_get(
+            channel=ANNOUNCEMENTS_CID,
+            timestamp=timestamp
+        )
+        reactions = response["message"]["reactions"]
         for reaction in reactions:
-            message = reaction["name"] + " -- users: " + ','.join(reaction["users"])
+            message = "{0} -- users: {1}".format(reaction["name"], ",".join(reaction["users"]))
             client.chat_postMessage(
-                channel="announcements",
+                channel=ANNOUNCEMENTS_CID,
                 text=message
             )
     return make_response("", 200)
@@ -93,7 +74,7 @@ def attendance():
 def practice():
     user = request.form["user_id"]
     announcements[user] = Announcement()
-    open_view(request.form.get('trigger_id'), json.dumps(PRACTICE_MODAL))
+    client.views_open(trigger_id=request.form["trigger_id"], view=json.dumps(PRACTICE_MODAL))
     return make_response("", 200)
 
 
