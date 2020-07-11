@@ -3,7 +3,10 @@ from flask import Flask, request, make_response
 import json
 import requests
 from .modals import PRACTICE_MODAL
+from slack import WebClient
+from slack.errors import SlackApiError
 
+client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 app = Flask(__name__)
 
 ANNOUNCEMENTS_CHANNEL_ID = "C014ZBQN82X"
@@ -19,16 +22,6 @@ class Announcement:
         self.location = ""
         self.is_tournament_roster = False
         self.comments = ""
-
-
-def post_message(channel, message):
-    endpt = "https://slack.com/api/chat.postMessage"
-    data = {
-        "token": os.environ['SLACK_BOT_TOKEN'],
-        "channel": channel,
-        "text": message
-    }
-    return requests.post(endpt, data=data)
 
 
 def get_reactions(channel, timestamp):
@@ -74,8 +67,11 @@ def send_announcement(user):
     ann = announcements[user]
     message = format_announcement(ann.time, ann.date, ann.location,
                                   ann.is_tournament_roster, ann.comments)
-    response = post_message("announcements", message)
-    previous_post_ts.append(response.json()["ts"])
+    response = client.chat_postMessage(
+        channel="announcements",
+        text=message
+    )
+    previous_post_ts.append(response["ts"])
 
 
 @app.route("/slack/commands/attendance", methods=["POST"])
@@ -86,7 +82,10 @@ def attendance():
         reactions = response.json()["message"]["reactions"]
         for reaction in reactions:
             message = reaction["name"] + " -- users: " + ','.join(reaction["users"])
-            post_message("announcements", message)
+            client.chat_postMessage(
+                channel="announcements",
+                text=message
+            )
     return make_response("", 200)
 
 
