@@ -2,13 +2,15 @@
 Built for the Tribe B Slack Channel. Makes announcements, takes attendance, and handles other miscellaneous tasks.
 
 ## Setup
-1. Create a slack app and setup slash commands and events. See bot/app.py for the specific endpoints you need. \
- If you are testing locally, install [ngrok](https://ngrok.com) to generate a base URL.
-2. Save Bot User OAuth Access Token as an environmental variable under the name SLACK_BOT_TOKEN.
-3. Add this bot to a test workspace.
-4. Install python3 and pip on your computer.
-5. Run the following commands:
-`pip3 install flask slackclient`
+1. Visit and install [ngrok](https://ngrok.com/download) if you plan to test locally (recommended). After getting the package all you need to do is unzip it. Its recommended you add this to your PATH variable so you can access the ngrok command from anywhere.
+2. Create a new slack workspace that you can use to test in.
+3. Create a [slack app](https://api.slack.com/apps) and link it to your newly created workspace.
+4. Go to 'App Home' from the side panel and update the Oauth stuff. These are the permissions for the bot. General read and write stuff are what you will need.
+5. Create your OAuth access token on this page. Copy this token and execute `export SLACK_BOT_TOKEN='<your_auth_token>'` in the base directory. This creates it as an environmental variable.
+6. Go to 'Slash Commands' from the side panel in the slack app and add the appropriate endpoints. These are in `./bot/app.py`. The base url will be generated when you run ngrok. For example, running `ngrok http 3000` will show a base url of 'http://ef0eb7abb91a.ngrok.io', so my full url for a command would be something like 'http://ef0eb7abb91a.ngrok.io/slack/practice'
+7. Go to 'Interactivity & Shortcuts' and add the `/slack/events` endpoint. This should be added here and not in the slash commands.
+8. Make sure python3 and pip are installed on your system.
+9. Make sure flask and slackclient are installed for the project: `pip3 install flask slackclient`
 
 ## Running
 If using localhost, you will need to use a service like ngrok to forward traffic from Slack to your events url.
