@@ -10,7 +10,7 @@ Built for the Tribe B Slack Channel. Makes announcements, takes attendance, and 
 6. Go to 'Slash Commands' from the side panel in the slack app and add the appropriate endpoints. These are in `./bot/app.py`. The base url will be generated when you run ngrok. For example, running `ngrok http 3000` will show a base url of 'http://ef0eb7abb91a.ngrok.io', so my full url for a command would be something like 'http://ef0eb7abb91a.ngrok.io/slack/practice'
 7. Go to 'Interactivity & Shortcuts' and add the `/slack/events` endpoint. This should be added here and not in the slash commands.
 8. Make sure python3 and pip are installed on your system.
-9. Make sure flask and slackclient are installed for the project: `pip3 install flask slackclient`
+9. Make sure flask and slackclient are installed for the project: `pip3 install flask slackclient black pre-commit`
 
 ## Running
 If using localhost, you will need to use a service like ngrok to forward traffic from Slack to your events url.
