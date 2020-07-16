@@ -6,5 +6,5 @@
 # Set Slack bot token for slack api.
 SLACK_BOT_TOKEN = "<your_token_here>"
 
-# Slack channel CIDs
+# Slack channel CIDs. These you can get from the url of the channel. It starts with a C.
 ANNOUNCEMENTS_CID = "<slack_channel_id>"
