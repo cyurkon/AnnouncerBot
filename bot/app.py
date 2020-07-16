@@ -4,10 +4,10 @@ from flask import Flask, request, make_response
 from slack import WebClient
 from .modals import PRACTICE_MODAL
 
-app = Flask(__name__)
-client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+from environment import SLACK_BOT_TOKEN, ANNOUNCEMENTS_CID
 
-ANNOUNCEMENTS_CID = "C014ZBQN82X"  # channel ID
+app = Flask(__name__)
+client = WebClient(token=SLACK_BOT_TOKEN)
 
 # Maps users to their partially completed announcements before they are posted to the workspace
 announcements = {}
