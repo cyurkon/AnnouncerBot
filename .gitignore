@@ -1,5 +1,6 @@
 # Environemt variables
 environment.py
+notes.txt # I (Lucas) added this to keep notes relevant to what I am working on.
 
 # IntelliJ .iml files
 *.iml
