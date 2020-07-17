@@ -27,10 +27,14 @@ class Announcement:
         self.comments = ""
 
 
-def format_announcement(time, date, location, is_tournament_roster, comments):
+def format_announcement(announcement):
     """Formats and returns announcement text"""
+    time = announcement.time
+    date = announcement.date
+    location = announcement.location
+    is_tournament_roster = announcement.is_tournament_roster
+    comments = announcement.comments
     roster = "*TOURNAMENT and RESERVE ROSTER PRACTICE ONLY*\n" if is_tournament_roster else ""
-    comments = "" if comments == "N" else comments
     return (
         "{3}"
         "********************************************\n"
@@ -48,10 +52,7 @@ def format_announcement(time, date, location, is_tournament_roster, comments):
 
 def send_announcement(user):
     """Sends data to format_announcement() and submits result to 'announcements' channel"""
-    ann = announcements[user]
-    message = format_announcement(
-        ann.time, ann.date, ann.location, ann.is_tournament_roster, ann.comments
-    )
+    message = format_announcement(announcements[user])
     response = client.chat_postMessage(channel=ANNOUNCEMENTS_CID, text=message)
     previous_post_ts.append(response["ts"])
 
@@ -101,7 +102,11 @@ def events():
         ):
             submitted_data = payload["view"]["state"]["values"]
             announcements[user].time = submitted_data["time_block"]["time"]["value"]
-            announcements[user].comments = submitted_data["comments_block"]["comments"]["value"]
+
+            if "value" in submitted_data["comments_block"]["comments"]:
+                announcements[user].comments = submitted_data["comments_block"]["comments"]["value"]
+            else:
+                announcements[user].comments = ""
             send_announcement(user)
     # validates events url
     elif request and "challenge" in request.json:
