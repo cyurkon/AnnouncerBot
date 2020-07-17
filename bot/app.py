@@ -1,9 +1,7 @@
 import json
-import os
 from flask import Flask, request, make_response
 from slack import WebClient
 from .modals import PRACTICE_MODAL
-
 from environment import SLACK_BOT_TOKEN, ANNOUNCEMENTS_CID
 
 app = Flask(__name__)
