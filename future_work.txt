@@ -1,0 +1,9 @@
+#### This is just a text file with possible ideas and notes regarding features that could be added             ####
+#### Please feel free to add to this, comment on anything already existing and so on                           ####
+#### If you do add something, place your name in brackets before that way people can figure out who is talking ####
+
+
+[LucasM]
+I think it would be nice to add permission / channel checks. Basically only admins or certain users should be able to perform certain commands. Or certain commands can only be performed while in certain channels. This would definitely have to occur after the event (like the slash commands) is triggered. If the user doesn't have the right permissions then it says something like you don't have the right permissions.The best way to implement this would be to have one or two methods that handle this.
+
+
