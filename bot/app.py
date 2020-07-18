@@ -103,8 +103,6 @@ def events():
 
             if "value" in submitted_data["comments_block"]["comments"]:
                 announcements[user].comments = submitted_data["comments_block"]["comments"]["value"]
-            else:
-                announcements[user].comments = ""
             send_announcement(user)
     # validates events url
     elif request and "challenge" in request.json:
