@@ -6,10 +6,8 @@ class Player(db.Model):
     name = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, pid, name, is_admin):
-        self.pid = pid
-        self.name = name
-        self.is_admin = is_admin
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         db.session.add(self)
         db.session.commit()
 
@@ -20,10 +18,8 @@ class Practice(db.Model):
     time = db.Column(db.String, nullable=False)
     is_tracked = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, timestamp, date, time):
-        self.timestamp = timestamp
-        self.date = date
-        self.time = time
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         db.session.add(self)
         db.session.commit()
 
@@ -34,9 +30,7 @@ class Attendance(db.Model):
     date = db.Column(db.String, db.ForeignKey("practice.date"))
     time = db.Column(db.String, db.ForeignKey("practice.time"))
 
-    def __init__(self, pid, date, time):
-        self.pid = pid
-        self.date = date
-        self.time = time
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         db.session.add(self)
         db.session.commit()

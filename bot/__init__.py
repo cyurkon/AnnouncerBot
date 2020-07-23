@@ -3,7 +3,11 @@ from flask import Flask
 from bot.shared import db
 
 app = Flask(__name__)
-import bot.commands
+# Do not move these imports. Flask requires all files that use route decorators to be imported AFTER the app is created.
+import bot.events
+import bot.slash_commands.practice
+import bot.slash_commands.attendance
+import bot.slash_commands.upt
 
 app.config.update(
     SQLALCHEMY_DATABASE_URI="sqlite:///" + os.getcwd() + "/tribeB.db",
