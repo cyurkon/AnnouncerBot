@@ -1,17 +1,13 @@
 import json
-from flask import Flask, request, make_response
-from slack import WebClient
-from .modals import PRACTICE_MODAL
-from environment import SLACK_BOT_TOKEN, ANNOUNCEMENTS_CID
-
-app = Flask(__name__)
-client = WebClient(token=SLACK_BOT_TOKEN)
+from flask import request, make_response
+from bot.modals import PRACTICE_MODAL
+from bot import app
+from bot.shared import db, client
+from bot.tables import Player, Practice, Attendance
+from environment import ANNOUNCEMENTS_CID
 
 # Maps users to their partially completed announcements before they are posted to the workspace
 announcements = {}
-
-# Previous post identifiers used for attendance taking
-previous_post_ts = []
 
 
 class Announcement:
@@ -50,20 +46,39 @@ def format_announcement(announcement):
 
 def send_announcement(user):
     """Sends data to format_announcement() and submits result to 'announcements' channel"""
-    message = format_announcement(announcements[user])
+    announcement = announcements[user]
+    message = format_announcement(announcement)
     response = client.chat_postMessage(channel=ANNOUNCEMENTS_CID, text=message)
-    previous_post_ts.append(response["ts"])
+    Practice(response["ts"], announcement.date, announcement.time)
 
 
 @app.route("/slack/commands/attendance", methods=["POST"])
 def attendance():
-    while previous_post_ts:
-        timestamp = previous_post_ts.pop()
-        response = client.reactions_get(channel=ANNOUNCEMENTS_CID, timestamp=timestamp)
+    untracked_practices = Practice.query.filter_by(is_tracked=False).all()
+    for untracked_practice in untracked_practices:
+        response = client.reactions_get(
+            channel=ANNOUNCEMENTS_CID, timestamp=untracked_practice.timestamp
+        )
         reactions = response["message"]["reactions"]
         for reaction in reactions:
-            message = "{0} -- users: {1}".format(reaction["name"], ",".join(reaction["users"]))
-            client.chat_postMessage(channel=ANNOUNCEMENTS_CID, text=message)
+            if reaction["name"] in ["michael_c_smile", "confused_conner", "gorilla"]:
+                for pid in reaction["users"]:
+                    Attendance(pid, untracked_practice.date, untracked_practice.time)
+        untracked_practice.is_tracked = True
+    db.session.commit()
+    return make_response("", 200)
+
+
+@app.route("/slack/commands/upt", methods=["POST"])
+def update_player_table():
+    Player.query.delete()
+    players = client.users_list()["members"]
+    for player in players:
+        if not player["is_bot"] and player["id"] != "USLACKBOT" and not player["deleted"]:
+            pid = player["id"]
+            name = player["profile"]["real_name"]
+            is_admin = player["is_admin"]
+            Player(pid, name, is_admin)
     return make_response("", 200)
 
 
