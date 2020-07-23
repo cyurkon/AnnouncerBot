@@ -1,17 +1,18 @@
 # tribeBot
-Built for the Tribe B Slack Channel. Makes announcements, takes attendance, and handles other miscellaneous tasks.
+Makes announcements, takes attendance, and handles other miscellaneous tasks.
 
 ## Setup
-1. Visit and install [ngrok](https://ngrok.com/download) if you plan to test locally (recommended). After getting the package all you need to do is unzip it. It's recommended you add this to your PATH variable so you can access the ngrok command from anywhere.
-2. Create a new slack workspace that you can use to test in.
-3. Create a [slack app](https://api.slack.com/apps) and link it to your newly created workspace.
-4. Go to 'App Home' from the side panel and update the OAuth stuff. These are the permissions for the bot. General read and write stuff are what you will need.
-5. Create your OAuth access token on this page. Copy this token. Then within your local repo run `cp expected_environment.py environment.py` to create a copy of the expected environment. This will hold our environment variables which are keys. These are unique to our individual environments (most of the time). Update SLACK_BOT_TOKEN with the copied token.
-6. Go to 'Slash Commands' from the side panel in the slack app and add the appropriate endpoints. These are in `./bot/app.py`. The base url will be generated when you run ngrok. For example, running `ngrok http 3000` will show a base url of 'http://ef0eb7abb91a.ngrok.io', so my full url for a command would be something like 'http://ef0eb7abb91a.ngrok.io/slack/practice'
-7. Go to 'Interactivity & Shortcuts' and add the `/slack/events` endpoint. This should be added here and not in the slash commands.
-8. Make sure python3 and pip are installed on your system.
-9. Make sure flask and slackclient are installed for the project: `pip3 install flask slackclient black pre-commit`.
-10. Configure black as a pre-commit hook: `pre-commit install`.
+1. Install [ngrok](https://ngrok.com/download) if you plan to test locally (recommended). Add this to your PATH variable so that you can call it from anywhere.
+2. Create a new Slack workspace with a channel called `announcements`. When you are in the `announcements` channel, click on the URL and note the channel ID. It starts with a C.
+3. Create a [Slack app](https://api.slack.com/apps) and install it to your newly created workspace.
+4. On the app's homepage, go to `OAuth & Permissions` and add the following scopes: `channels:history`, `channels:join`, `chat:write`, `commands`, `reactions:read`, and `users:read`. Note the `Bot User OAuth Access Token`.
+5. Fork this repository and create a local clone. Within your local repository run `cp expected_environment.py environment.py` to create a copy of the expected environment. This will hold your unique environmental variables. Update `SLACK_BOT_TOKEN` with the `Bot User OAuth Access Token` from step 4 and `ANNOUNCEMENTS_CID` with the channel ID from step 2.
+6. Go to the `announcements` channel and click the "Add an app" button. Add your app.
+7. On the app's homepage, go to `Slash Commands` and add the appropriate endpoints. These can be found in `./bot/slash_commands`. The base url will be generated when you run ngrok. For example, running `ngrok http 3000` might generate the base url `http://ef0eb7abb91a.ngrok.io`. In that case, the request url for the /practice command would be `http://ef0eb7abb91a.ngrok.io/slack/commands/practice`.
+8. On the app's homepage, go to `Interactivity & Shortcuts` and add the `/slack/events` endpoint.
+9. Make sure python 3.8 and pip are installed on your system.
+10. Install the required libraries: `pip3 install flask flask_sqlalchemy slackclient black pre-commit`.
+11. Configure black as a pre-commit hook: `pre-commit install`.
 
 ## Running
 If using localhost, you will need to use a service like ngrok to forward traffic from Slack to your events url.
