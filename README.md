@@ -19,5 +19,5 @@ If using localhost, you will need to use a service like ngrok to forward traffic
 Run this from the command line: `ngrok http 3000` and `python3 run.py`
 
 ## Documentation
-[Slack API](https://api.slack.com)
+[Slack API](https://api.slack.com)  
 [Slack Python SDK](https://slack.dev/python-slackclient/)

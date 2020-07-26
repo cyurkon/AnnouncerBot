@@ -1,0 +1,105 @@
+{
+  "type": "modal",
+  "callback_id": "attendance list",
+  "title": {
+    "type": "plain_text",
+    "text": "View Attendance",
+    "emoji": true
+  },
+  "submit": {
+    "type": "plain_text",
+    "text": "Submit",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Cancel",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ""
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "section",
+      "block_id": "player_select",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Select a player"
+      },
+      "accessory": {
+        "action_id": "player_select",
+        "type": "external_select",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Select an item"
+        },
+        "min_query_length": 0
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Select an attendance type."
+      },
+      "accessory": {
+        "type": "static_select",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Select an item",
+          "emoji": true
+        },
+        "options": [
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "On Time",
+              "emoji": true
+            },
+            "value": "value-0"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "Late w/ Excuse",
+              "emoji": true
+            },
+            "value": "value-1"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "Late w/o Excuse",
+              "emoji": true
+            },
+            "value": "value-2"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "Absent w/ Excuse",
+              "emoji": true
+            },
+            "value": "value-3"
+          },
+          {
+            "text": {
+              "type": "plain_text",
+              "text": "Absent w/o Excuse",
+              "emoji": true
+            },
+            "value": "value-4"
+          }
+        ]
+      }
+    }
+  ]
+}

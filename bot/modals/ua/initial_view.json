@@ -1,0 +1,32 @@
+{
+  "type": "modal",
+  "callback_id": "view attendance",
+  "title": {
+    "type": "plain_text",
+    "text": "View Attendance",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Cancel",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Choose the date of the event."
+      },
+      "accessory": {
+        "type": "datepicker",
+        "initial_date": "2020-08-22",
+        "placeholder": {
+          "type": "plain_text",
+          "text": "Select a date",
+          "emoji": true
+        }
+      }
+    }
+  ]
+}

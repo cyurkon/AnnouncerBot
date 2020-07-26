@@ -5,6 +5,7 @@ class Player(db.Model):
     pid = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
+    practices = db.relationship("Attendance", backref="player")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -29,6 +30,7 @@ class Attendance(db.Model):
     pid = db.Column(db.String, db.ForeignKey("player.pid"))
     date = db.Column(db.String, db.ForeignKey("practice.date"))
     time = db.Column(db.String, db.ForeignKey("practice.time"))
+    status = db.Column(db.String)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

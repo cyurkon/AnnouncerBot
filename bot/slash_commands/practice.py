@@ -1,7 +1,6 @@
 import json
 from flask import request, make_response
 from bot import app
-from bot.modals import PRACTICE_MODAL
 from bot.shared import client
 from bot.tables import Practice
 from environment import ANNOUNCEMENTS_CID
@@ -75,5 +74,6 @@ def send_announcement(user):
 def practice():
     user = request.form["user_id"]
     announcements[user] = Announcement()
-    client.views_open(trigger_id=request.form["trigger_id"], view=json.dumps(PRACTICE_MODAL))
+    with open("bot/modals/practice.json") as f:
+        client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)

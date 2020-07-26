@@ -2,6 +2,7 @@ import json
 from flask import request, make_response
 from bot import app
 from bot.slash_commands.practice import update_announcement
+from bot.slash_commands.ua import update_view
 
 
 @app.route("/slack/events", methods=["POST"])
@@ -14,6 +15,9 @@ def events():
         # event comes from a practice modal (interaction with the datepicker, location select, or roster checkbox)
         if payload["view"]["callback_id"] == "practice modal":
             update_announcement(user, payload)
+        # event comes from view attendance modal
+        elif payload["view"]["callback_id"] in ["view attendance", "attendance list"]:
+            update_view(payload)
     # validates events url
     elif request and "challenge" in request.json:
         return make_response(request.json["challenge"])

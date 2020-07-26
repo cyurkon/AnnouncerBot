@@ -1,0 +1,16 @@
+{
+  "type": "section",
+  "text": {
+    "type": "mrkdwn",
+    "text": "Pick a time"
+  },
+  "accessory": {
+    "action_id": "time_select",
+    "type": "external_select",
+    "placeholder": {
+      "type": "plain_text",
+      "text": "Select an item"
+    },
+    "min_query_length": 0
+  }
+}
