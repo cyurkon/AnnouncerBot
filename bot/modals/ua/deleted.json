@@ -1,0 +1,23 @@
+{
+  "type": "modal",
+  "callback_id": "attendance list",
+  "title": {
+    "type": "plain_text",
+    "text": "View Attendance",
+    "emoji": true
+  },
+  "close": {
+    "type": "plain_text",
+    "text": "Close",
+    "emoji": true
+  },
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Event deleted"
+      }
+    }
+        ]
+}

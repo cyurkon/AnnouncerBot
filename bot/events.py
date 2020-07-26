@@ -17,7 +17,7 @@ def events():
             update_announcement(user, payload)
         # event comes from view attendance modal
         elif payload["view"]["callback_id"] in ["view attendance", "attendance list"]:
-            update_view(payload)
+            update_view(user, payload)
     # validates events url
     elif request and "challenge" in request.json:
         return make_response(request.json["challenge"])

@@ -28,6 +28,40 @@
       "type": "divider"
     },
     {
+      "type": "actions",
+      "block_id": "delete_event",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Delete Event",
+            "emoji": true
+          },
+          "value": "delete_event",
+          "style": "danger",
+          "confirm": {
+            "title": {
+              "type": "plain_text",
+              "text": "Are you sure?"
+            },
+            "text": {
+              "type": "mrkdwn",
+              "text": "This will be permanent."
+            },
+            "confirm": {
+              "type": "plain_text",
+              "text": "Yes"
+            },
+            "deny": {
+              "type": "plain_text",
+              "text": "Cancel"
+            }
+          }
+        }
+      ]
+    },
+    {
       "type": "section",
       "block_id": "player_select",
       "text": {
