@@ -1,6 +1,6 @@
 {
   "type": "modal",
-  "callback_id": "attendance list",
+  "callback_id": "deleted_mattend_view",
   "title": {
     "type": "plain_text",
     "text": "View Attendance",
@@ -16,7 +16,7 @@
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "Event deleted"
+        "text": "Event deleted."
       }
     }
         ]

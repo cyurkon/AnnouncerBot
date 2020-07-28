@@ -1,79 +1,60 @@
 import json
 from flask import request, make_response
 from bot import app
-from bot.shared import client
+from bot.shared import client, modals
 from bot.tables import Practice
 from environment import ANNOUNCEMENTS_CID
 
-# Maps users to their partially completed announcements before they are posted to the workspace
-announcements = {}
 
-
-class Announcement:
-    """Defines a channel announcement"""
-
-    def __init__(self):
-        self.time = ""
-        self.date = ""
-        self.location = ""
-        self.is_tournament_roster = False
-        self.comments = ""
-
-
-def update_announcement(user, payload):
+def update_announcement_modal(user, payload):
+    modal = modals[user]
     if payload["type"] == "block_actions":
-        submitted_data = payload["actions"][0]
-        if submitted_data["type"] == "datepicker":
-            announcements[user].date = submitted_data["selected_date"]
-        elif submitted_data["type"] == "static_select":
-            announcements[user].location = submitted_data["selected_option"]["text"]["text"]
-        else:
-            announcements[user].is_tournament_roster = True
-        # user submits form
+        data = payload["actions"][0]
+        if data["type"] == "datepicker":
+            modal["date"] = data["selected_date"]
+        elif data["type"] == "static_select":
+            modal["location"] = data["selected_option"]["value"]
+        elif data["type"] == "checkboxes":
+            modal["type"] = "*TOURNAMENT and RESERVE ROSTER PRACTICE ONLY*\n"
     elif payload["type"] == "view_submission":
-        submitted_data = payload["view"]["state"]["values"]
-        announcements[user].time = submitted_data["time_block"]["time"]["value"]
+        data = payload["view"]["state"]["values"]
+        modal["time"] = data["time_block"]["time"]["value"]
+        # Use get method when API is updated
+        if "comments_block" in data and "value" in data["comments_block"]["comments"]:
+            modal["comments"] = data["comments_block"]["comments"]["value"]
+        submit_announcement(user)
 
-        if "value" in submitted_data["comments_block"]["comments"]:
-            announcements[user].comments = submitted_data["comments_block"]["comments"]["value"]
-        send_announcement(user)
 
-
-def format_announcement(announcement):
+def format_announcement(modal):
     """Formats and returns announcement text"""
-    time = announcement.time
-    date = announcement.date
-    location = announcement.location
-    is_tournament_roster = announcement.is_tournament_roster
-    comments = announcement.comments
-    roster = "*TOURNAMENT and RESERVE ROSTER PRACTICE ONLY*\n" if is_tournament_roster else ""
     return (
-        "{3}"
+        "{type}"
         "********************************************\n"
-        "Practice from *{0}*, *{1}*\n"
-        "{2}\n"
+        "Practice from *{time}*, *{date}*\n"
+        "{location}\n"
         "================================\n"
         ":michael_c_smile:: react if you will be coming\n"
         ":confused_conner:: react if you will be coming but late\n"
         ":sleepy_eric:: react if you will not be coming\n"
         ":gorilla:: react if you will be coming but not playing\n"
         "********************************************\n"
-        "{4}".format(time, date, location, roster, comments)
+        "{comments}".format(**modal)
     )
 
 
-def send_announcement(user):
+def submit_announcement(user):
     """Sends data to format_announcement() and submits result to 'announcements' channel"""
-    announcement = announcements[user]
-    message = format_announcement(announcement)
+    modal = modals[user]
+    message = format_announcement(modal)
     response = client.chat_postMessage(channel=ANNOUNCEMENTS_CID, text=message)
-    Practice(timestamp=response["ts"], date=announcement.date, time=announcement.time)
+    Practice(timestamp=response["ts"], date=modal["date"], time=modal["time"])
+    modals.pop(user)
 
 
 @app.route("/slack/commands/practice", methods=["POST"])
 def practice():
     user = request.form["user_id"]
-    announcements[user] = Announcement()
+    modals[user] = {"type": "", "time": "", "date": "", "location": "", "comments": ""}
     with open("bot/modals/practice.json") as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)

@@ -44,7 +44,7 @@
                                 "text": "SAC fields field 1",
                                 "emoji": true
                             },
-                            "value": "value-0"
+                            "value": "SAC fields field 1"
                         },
                         {
                             "text": {
@@ -52,7 +52,7 @@
                                 "text": "SAC fields field 2",
                                 "emoji": true
                             },
-                            "value": "value-1"
+                            "value": "SAC fields field 2"
                         },
                         {
                             "text": {
@@ -60,7 +60,7 @@
                                 "text": "SAC fields field 3",
                                 "emoji": true
                             },
-                            "value": "value-2"
+                            "value": "SAC fields field 3"
                         },
                         {
                             "text": {
@@ -68,11 +68,11 @@
                                 "text": "SAC fields field 4",
                                 "emoji": true
                             },
-                            "value": "value-2"
+                            "value": "SAC fields field 4"
                         },
                         {
                             "text": {"type": "plain_text", "text": "Burger Bowl", "emoji": true},
-                            "value": "value-2"
+                            "value": "Burger Bowl"
                         }
                     ]
                 }

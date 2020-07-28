@@ -19,17 +19,18 @@ def attendance():
         response = client.reactions_get(
             channel=ANNOUNCEMENTS_CID, timestamp=untracked_practice.timestamp
         )
-        reactions = response["message"]["reactions"]
-        for reaction in reactions:
-            if reaction["name"] in emojis:
-                status = emojis[reaction["name"]]
-                for pid in reaction["users"]:
-                    Attendance(
-                        pid=pid,
-                        date=untracked_practice.date,
-                        time=untracked_practice.time,
-                        status=status,
-                    )
+        if "reactions" in response["message"]:
+            reactions = response["message"]["reactions"]
+            for reaction in reactions:
+                if reaction["name"] in emojis:
+                    status = emojis[reaction["name"]]
+                    for pid in reaction["users"]:
+                        Attendance(
+                            pid=pid,
+                            date=untracked_practice.date,
+                            time=untracked_practice.time,
+                            status=status,
+                        )
         untracked_practice.is_tracked = True
     db.session.commit()
     return make_response("", 200)

@@ -1,6 +1,6 @@
 {
   "type": "modal",
-  "callback_id": "view attendance",
+  "callback_id": "initial_mattend_view",
   "title": {
     "type": "plain_text",
     "text": "View Attendance",
