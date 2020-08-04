@@ -1,108 +1,167 @@
 {
+    "title": {
+        "type": "plain_text",
+        "text": "Practice Announcement",
+        "emoji": true
+    },
+    "submit": {
+        "type": "plain_text",
+        "text": "Submit",
+        "emoji": true
+    },
     "type": "modal",
-    "callback_id": "practice modal",
-    "title": {"type": "plain_text", "text": "Announcer", "emoji": true},
-    "submit": {"type": "plain_text", "text": "Submit", "emoji": true},
-    "close": {"type": "plain_text", "text": "Cancel", "emoji": true},
+    "callback_id": "/practice",
+    "close": {
+        "type": "plain_text",
+        "text": "Cancel",
+        "emoji": true
+    },
     "blocks": [
         {
-            "type": "section",
-            "text": {"type": "plain_text", "emoji": true, "text": "Practice Announcement"}
-        },
-        {
             "type": "input",
-            "block_id": "time_block",
-            "element": {"type": "plain_text_input", "action_id": "time"},
+            "block_id": "time",
+            "element": {
+                "type": "plain_text_input",
+                "action_id": "time",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "6-8 PM Tomorrow"
+                }
+            },
             "label": {
                 "type": "plain_text",
-                "text": "What time (e.g., 6-8 PM Tomorrow)?",
+                "text": "Time",
                 "emoji": true
             }
         },
         {
-            "type": "actions",
-            "block_id": "actions_block",
-            "elements": [
-                {
-                    "type": "datepicker",
-                    "initial_date": "2020-08-22",
-                    "action_id": "date_action",
-                    "placeholder": {"type": "plain_text", "emoji": true, "text": "Select a date"}
-                },
-                {
-                    "type": "static_select",
-                    "action_id": "location_action",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "emoji": true,
-                        "text": "Select a location"
-                    },
-                    "options": [
-                        {
-                            "text": {
-                                "type": "plain_text",
-                                "text": "SAC fields field 1",
-                                "emoji": true
-                            },
-                            "value": "SAC fields field 1"
-                        },
-                        {
-                            "text": {
-                                "type": "plain_text",
-                                "text": "SAC fields field 2",
-                                "emoji": true
-                            },
-                            "value": "SAC fields field 2"
-                        },
-                        {
-                            "text": {
-                                "type": "plain_text",
-                                "text": "SAC fields field 3",
-                                "emoji": true
-                            },
-                            "value": "SAC fields field 3"
-                        },
-                        {
-                            "text": {
-                                "type": "plain_text",
-                                "text": "SAC fields field 4",
-                                "emoji": true
-                            },
-                            "value": "SAC fields field 4"
-                        },
-                        {
-                            "text": {"type": "plain_text", "text": "Burger Bowl", "emoji": true},
-                            "value": "Burger Bowl"
-                        }
-                    ]
+            "type": "input",
+            "block_id": "date",
+            "element": {
+                "type": "datepicker",
+                "action_id": "date",
+                "initial_date": "2020-08-22",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select a date",
+                    "emoji": true
                 }
-            ]
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Date",
+                "emoji": true
+            }
         },
         {
-            "type": "actions",
-            "block_id": "roster_block",
-            "elements": [
-                {
-                    "type": "checkboxes",
-                    "action_id": "roster",
-                    "options": [
-                        {
-                            "text": {
-                                "type": "plain_text",
-                                "text": "Tournament & Reserve Roster Only",
-                                "emoji": true
-                            }
-                        }
-                    ]
-                }
-            ]
+            "type": "input",
+            "block_id": "location",
+            "element": {
+                "type": "static_select",
+                "action_id": "location",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select a location",
+                    "emoji": true
+                },
+                "options": [
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "SAC fields field 1",
+                            "emoji": true
+                        },
+                        "value": "SAC fields field 1"
+                    },
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "SAC fields field 2",
+                            "emoji": true
+                        },
+                        "value": "SAC fields field 2"
+                    },
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "SAC fields field 3",
+                            "emoji": true
+                        },
+                        "value": "SAC fields field 3"
+                    },
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "SAC fields field 4",
+                            "emoji": true
+                        },
+                        "value": "SAC fields field 4"
+                    },
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Burger Bowl",
+                            "emoji": true
+                        },
+                        "value": "Burger Bowl"
+                    }
+                ]
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Location",
+                "emoji": true
+            }
+        },
+        {
+            "type": "input",
+            "block_id": "roster",
+            "element": {
+                "type": "static_select",
+                "action_id": "roster",
+                "placeholder": {
+                    "type": "plain_text",
+                    "text": "Select a roster type",
+                    "emoji": true
+                },
+                "options": [
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Everyone",
+                            "emoji": true
+                        },
+                        "value": "*"
+                    },
+                    {
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Tournament & Reserve Roster Only",
+                            "emoji": true
+                        },
+                        "value": "*TOURNAMENT and RESERVE ROSTER PRACTICE ONLY*\n*"
+                    }
+                ]
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Roster Type",
+                "emoji": true
+            }
         },
         {
             "type": "input",
             "optional": true,
-            "block_id": "comments_block",
-            "element": {"type": "plain_text_input", "action_id": "comments"},
-            "label": {"type": "plain_text", "text": "Special Comments", "emoji": true}
+            "block_id": "comments",
+            "element": {
+                "type": "plain_text_input",
+                "action_id": "comments"
+            },
+            "label": {
+                "type": "plain_text",
+                "text": "Special Comments",
+                "emoji": true
+            }
         }
     ]
 }

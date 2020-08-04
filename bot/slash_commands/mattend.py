@@ -27,6 +27,7 @@ def submit_change(user):
     modals.pop(user)
 
 
+# Use private metadata here to get rid of user dict
 def update_mattend_modal(user, payload):
     modal = modals[user]
     if payload["type"] == "block_actions":

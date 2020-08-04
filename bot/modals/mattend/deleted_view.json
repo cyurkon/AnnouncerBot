@@ -1,6 +1,6 @@
 {
   "type": "modal",
-  "callback_id": "deleted_mattend_view",
+  "callback_id": "/mattend",
   "title": {
     "type": "plain_text",
     "text": "View Attendance",
