@@ -7,6 +7,7 @@ from bot.tables import Player
 @app.route("/slack/commands/upt", methods=["POST"])
 @validate_request
 def update_player_table():
+    """Insert all workspace users into the database's Player table."""
     Player.query.delete()
     players = client.users_list()["members"]
     for player in players:

@@ -9,16 +9,15 @@ from bot.shared import validate_request
 @app.route("/slack/events", methods=["POST"])
 @validate_request
 def events():
-    """Handles workspace events sent to app's /slack/events url"""
+    """Dispatch workspace events sent to app's /slack/events url."""
     if request and "payload" in request.form:
         payload = json.loads(request.form["payload"])
-        user = payload["user"]["id"]
         # submitted /practice modal
         if payload["view"]["callback_id"] == "/practice":
             submit_announcement(payload)
         # submitted from /mattend modal
         elif payload["view"]["callback_id"] == "/mattend":
-            update_mattend_modal(user, payload)
+            update_mattend_modal(payload)
     # validates events url
     elif request and "challenge" in request.json:
         return make_response(request.json["challenge"])

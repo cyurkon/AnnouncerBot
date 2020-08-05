@@ -11,14 +11,8 @@ from environment import SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
 # db is declared here rather than __init__.py to prevent circular imports.
 db = SQLAlchemy()
 client = WebClient(token=SLACK_BOT_TOKEN)
-# This dictionary maps users to their partially-completed modals and is
-# required so that multiple people can use slash commands at the same time.
-modals = {}
 
 
-# The following methods are used to verify that incoming requests are from Slack.
-# All endpoints should have the @validate_request decorator attached.
-# Based on https://github.com/slackapi/python-slack-events-api/blob/main/slackeventsapi/server.py
 def verify_signature(request_data, timestamp, signature):
     msg = str.encode("v0:" + str(timestamp) + ":") + request_data
     request_hash = (
@@ -27,7 +21,7 @@ def verify_signature(request_data, timestamp, signature):
     return hmac.compare_digest(request_hash, signature)
 
 
-def is_valid():
+def is_valid_request():
     timestamp = request.headers.get("X-Slack-Request-Timestamp")
     if timestamp is None or abs(time() - int(timestamp)) > 60 * 5:
         return False
@@ -38,9 +32,17 @@ def is_valid():
 
 
 def validate_request(endpoint):
+    """
+    Verify that incoming requests are from Slack.
+
+    All endpoints should have the @validate_request decorator attached.
+    Based on https://github.com/slackapi/python-slack-events-api/blob/main/slackeventsapi/server.py.
+    See https://api.slack.com/authentication/verifying-requests-from-slack for more details.
+    """
+
     @wraps(endpoint)
     def wrapper():
-        assert is_valid()
+        assert is_valid_request()
         return endpoint()
 
     return wrapper

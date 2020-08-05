@@ -3,7 +3,7 @@
   "callback_id": "/mattend",
   "title": {
     "type": "plain_text",
-    "text": "View Attendance",
+    "text": "Manual Attendance",
     "emoji": true
   },
   "submit": {
@@ -21,74 +21,40 @@
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": ""
+        "text": "Make any required adjustments."
       }
     },
     {
       "type": "divider"
     },
     {
-      "type": "actions",
-      "block_id": "delete_event",
-      "elements": [
-        {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "Delete Event",
-            "emoji": true
-          },
-          "value": "delete_event",
-          "style": "danger",
-          "confirm": {
-            "title": {
-              "type": "plain_text",
-              "text": "Are you sure?"
-            },
-            "text": {
-              "type": "mrkdwn",
-              "text": "This will be permanent."
-            },
-            "confirm": {
-              "type": "plain_text",
-              "text": "Yes"
-            },
-            "deny": {
-              "type": "plain_text",
-              "text": "Cancel"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "type": "section",
+      "type": "input",
       "block_id": "player_select",
-      "text": {
-        "type": "mrkdwn",
-        "text": "Select a player"
-      },
-      "accessory": {
+      "element": {
         "action_id": "player_select",
         "type": "external_select",
         "placeholder": {
           "type": "plain_text",
-          "text": "Select an item"
+          "text": "Select player",
+          "emoji": true
         },
         "min_query_length": 0
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Player",
+        "emoji": true
       }
     },
     {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "Select an attendance type."
-      },
-      "accessory": {
+      "type": "input",
+      "block_id": "attendance_select",
+      "element": {
         "type": "static_select",
+        "action_id": "attendance_select",
         "placeholder": {
           "type": "plain_text",
-          "text": "Select an item",
+          "text": "Select an attendance type",
           "emoji": true
         },
         "options": [
@@ -133,7 +99,50 @@
             "value": "Absent w/o Excuse"
           }
         ]
+      },
+      "label": {
+        "type": "plain_text",
+        "text": "Status",
+        "emoji": true
       }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "block_id": "delete_event",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Delete Event",
+            "emoji": true
+          },
+          "value": "delete_event",
+          "style": "danger",
+          "confirm": {
+            "title": {
+              "type": "plain_text",
+              "text": "Are you sure?"
+            },
+            "text": {
+              "type": "mrkdwn",
+              "text": "This will be permanent."
+            },
+            "confirm": {
+              "type": "plain_text",
+              "text": "Yes"
+            },
+            "deny": {
+              "type": "plain_text",
+              "text": "Cancel"
+            }
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "private_metadata": ""
 }

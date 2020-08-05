@@ -1,7 +1,7 @@
 import json
 from flask import make_response, request
 from bot import app
-from bot.shared import db, client, modals, validate_request
+from bot.shared import db, client, validate_request
 from bot.tables import Practice, Attendance
 
 
@@ -15,66 +15,74 @@ DV_URL = "bot/modals/mattend/deleted_view.json"
 @app.route("/slack/commands/mattend", methods=["POST"])
 @validate_request
 def manual_attendance():
-    user = request.form["user_id"]
-    modals[user] = {"date": "", "time": "", "pid": "", "status": ""}
+    """Open the manual attendance modal for the caller."""
     with open(IV_URL) as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)
 
 
-def submit_change(user):
-    modal = modals[user]
+def submit_change(metadata):
     record = Attendance.query.filter_by(
-        pid=modal["pid"], date=modal["date"], time=modal["time"]
+        pid=metadata["pid"], date=metadata["date"], time=metadata["time"]
     ).first()
-    if record and modal["status"] == "Absent w/o Excuse":
+    if record and metadata["status"] == "Absent w/o Excuse":
         db.session.delete(record)
     elif record:
-        record.status = modal["status"]
-    elif modal["status"] != "Absent w/o Excuse":
-        Attendance(pid=modal["pid"], date=modal["date"], time=modal["time"], status=modal["status"])
+        record.status = metadata["status"]
+    elif metadata["status"] != "Absent w/o Excuse":
+        Attendance(**metadata)
     db.session.commit()
-    modals.pop(user)
 
 
-# Use private metadata here to get rid of user dict
-def update_mattend_modal(user, payload):
-    modal = modals[user]
+def delete_practice(metadata):
+    Attendance.query.filter_by(date=metadata["date"], time=metadata["time"]).delete()
+    Practice.query.filter_by(date=metadata["date"], time=metadata["time"]).delete()
+    db.session.commit()
+
+
+def json_load(URL):
+    with open(URL) as f:
+        return json.load(f)
+
+
+def update_mattend_modal(payload):
+    """
+    Updates the /mattend modal as different options are selected.
+
+    Metadata can be passed between views using the "private_metadata" field.
+    """
+    metadata = json.loads(payload["view"]["private_metadata"])
     if payload["type"] == "block_actions":
+        view = {}
         data = payload["actions"][0]
         if data["type"] == "datepicker":
-            modal["date"] = data["selected_date"]
-            times = Practice.query.filter_by(date=modal["date"]).all()
-            with open(IV_URL) as initial_view:
-                view = json.load(initial_view)
-                view["blocks"][0]["accessory"]["initial_date"] = modal["date"]
-                if not times:
-                    with open(WD_URL) as wrong_date:
-                        view["blocks"].append(json.load(wrong_date))
-                else:
-                    with open(TS_URL) as time_select:
-                        view["blocks"].append(json.load(time_select))
-                client.views_update(view_id=payload["view"]["id"], view=json.dumps(view))
+            # When a date is chosen, display all practice time found for that date.
+            # If none are found, display an error message.
+            metadata["date"] = data["selected_date"]
+            view = json_load(IV_URL)
+            view["blocks"][0]["accessory"]["initial_date"] = metadata["date"]
+            times = Practice.query.filter_by(date=metadata["date"]).all()
+            if not times:
+                view["blocks"].append(json_load(WD_URL))
+            else:
+                view["blocks"].append(json_load(TS_URL))
         elif data["type"] == "external_select" and data["action_id"] == "time_select":
-            modal["time"] = data["selected_option"]["value"]
-            with open(FV_URL) as final_view:
-                view = json.load(final_view)
-                view["blocks"][0]["text"][
-                    "text"
-                ] = "Adjusting attendance for event on {date} at {time}".format(**modal)
-                client.views_update(view_id=payload["view"]["id"], view=json.dumps(view))
-        elif data["type"] == "external_select" and data["action_id"] == "player_select":
-            modal["pid"] = data["selected_option"]["value"]
+            # When a time is chosen, load the next view where attendance adjustments can be made.
+            metadata["time"] = data["selected_option"]["value"]
+            view = json_load(FV_URL)
+            view["blocks"][0]["text"][
+                "text"
+            ] = "Adjusting attendance for event on {date} at {time}.".format(**metadata)
         elif data["type"] == "button":
-            Attendance.query.filter_by(date=modal["date"], time=modal["time"]).delete()
-            Practice.query.filter_by(date=modal["date"], time=modal["time"]).delete()
-            db.session.commit()
-            with open(DV_URL) as deleted_view:
-                client.views_update(
-                    view_id=payload["view"]["id"], view=json.loads(deleted_view.read())
-                )
-            modals.pop(user)
-        elif data["type"] == "static_select":
-            modal["status"] = data["selected_option"]["value"]
+            # Delete event button pressed.
+            delete_practice(metadata)
+            view = json_load(DV_URL)
+        view["private_metadata"] = json.dumps(metadata)
+        client.views_update(view_id=payload["view"]["id"], view=json.dumps(view))
     elif payload["type"] == "view_submission":
-        submit_change(user)
+        values = payload["view"]["state"]["values"]
+        metadata["pid"] = values["player_select"]["player_select"]["selected_option"]["value"]
+        metadata["status"] = values["attendance_select"]["attendance_select"]["selected_option"][
+            "value"
+        ]
+        submit_change(metadata)

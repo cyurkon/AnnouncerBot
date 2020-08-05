@@ -17,6 +17,8 @@ import bot.slash_commands.mattend
 import bot.slash_commands.practice
 import bot.slash_commands.upt
 
+# You can add ENV="development" to this config but the Flask documentation
+# recommends you add it as an environmental variable.
 app.config.update(
     SQLALCHEMY_DATABASE_URI="sqlite:///" + os.getcwd() + "/tribeB.db",
     SQLALCHEMY_TRACK_MODIFICATIONS=False,

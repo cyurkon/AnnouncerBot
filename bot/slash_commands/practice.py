@@ -9,13 +9,13 @@ from environment import ANNOUNCEMENTS_CID
 @app.route("/slack/commands/practice", methods=["POST"])
 @validate_request
 def practice():
+    """Open a practice modal for the caller."""
     with open("bot/modals/practice.json") as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)
 
 
 def format_announcement(modal):
-    """Formats and returns practice announcement text"""
     return (
         "{roster}"
         "*******************************************\n"
@@ -32,7 +32,7 @@ def format_announcement(modal):
 
 
 def submit_announcement(payload):
-    """Sends values to format_announcement() and submits result to 'announcements' channel"""
+    """Send modal to format_announcement() and submit result to 'announcements' channel."""
     values = payload["view"]["state"]["values"]
     modal = {
         "time": values["time"]["time"]["value"],
