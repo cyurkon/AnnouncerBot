@@ -1,0 +1,5 @@
+black
+flask
+flask_sqlalchemy
+pre-commit
+slackclient
