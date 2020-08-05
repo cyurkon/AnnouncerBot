@@ -1,7 +1,7 @@
 import json
 from flask import make_response, request
 from bot import app
-from bot.shared import db, client, modals
+from bot.shared import db, client, modals, validate_request
 from bot.tables import Practice, Attendance
 
 
@@ -10,6 +10,16 @@ TS_URL = "bot/modals/mattend/time_select.json"
 WD_URL = "bot/modals/mattend/wrong_date.json"
 FV_URL = "bot/modals/mattend/final_view.json"
 DV_URL = "bot/modals/mattend/deleted_view.json"
+
+
+@app.route("/slack/commands/mattend", methods=["POST"])
+@validate_request
+def manual_attendance():
+    user = request.form["user_id"]
+    modals[user] = {"date": "", "time": "", "pid": "", "status": ""}
+    with open(IV_URL) as f:
+        client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
+    return make_response("", 200)
 
 
 def submit_change(user):
@@ -68,12 +78,3 @@ def update_mattend_modal(user, payload):
             modal["status"] = data["selected_option"]["value"]
     elif payload["type"] == "view_submission":
         submit_change(user)
-
-
-@app.route("/slack/commands/mattend", methods=["POST"])
-def manual_attendance():
-    user = request.form["user_id"]
-    modals[user] = {"date": "", "time": "", "pid": "", "status": ""}
-    with open(IV_URL) as f:
-        client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
-    return make_response("", 200)

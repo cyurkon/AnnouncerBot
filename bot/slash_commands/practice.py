@@ -1,12 +1,13 @@
 import json
 from flask import request, make_response
 from bot import app
-from bot.shared import client
+from bot.shared import client, validate_request
 from bot.tables import Practice
 from environment import ANNOUNCEMENTS_CID
 
 
 @app.route("/slack/commands/practice", methods=["POST"])
+@validate_request
 def practice():
     with open("bot/modals/practice.json") as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))

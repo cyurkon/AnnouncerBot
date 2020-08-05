@@ -3,9 +3,11 @@ from flask import request, make_response
 from bot import app
 from bot.slash_commands.practice import submit_announcement
 from bot.slash_commands.mattend import update_mattend_modal
+from bot.shared import validate_request
 
 
 @app.route("/slack/events", methods=["POST"])
+@validate_request
 def events():
     """Handles workspace events sent to app's /slack/events url"""
     if request and "payload" in request.form:

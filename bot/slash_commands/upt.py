@@ -1,10 +1,11 @@
 from flask import make_response
 from bot import app
-from bot.shared import client
+from bot.shared import client, validate_request
 from bot.tables import Player
 
 
 @app.route("/slack/commands/upt", methods=["POST"])
+@validate_request
 def update_player_table():
     Player.query.delete()
     players = client.users_list()["members"]

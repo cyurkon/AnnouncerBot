@@ -1,6 +1,6 @@
 from flask import make_response
 from bot import app
-from bot.shared import db, client
+from bot.shared import db, client, validate_request
 from bot.tables import Practice, Attendance
 from environment import ANNOUNCEMENTS_CID
 
@@ -13,6 +13,7 @@ emojis = {
 
 
 @app.route("/slack/commands/attendance", methods=["POST"])
+@validate_request
 def attendance():
     untracked_practices = Practice.query.filter_by(is_tracked=False).all()
     for untracked_practice in untracked_practices:
