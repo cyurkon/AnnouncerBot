@@ -48,10 +48,10 @@
     },
     {
       "type": "input",
-      "block_id": "attendance_select",
+      "block_id": "status_select",
       "element": {
         "type": "static_select",
-        "action_id": "attendance_select",
+        "action_id": "status_select",
         "placeholder": {
           "type": "plain_text",
           "text": "Select an attendance type",

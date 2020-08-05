@@ -1,13 +1,14 @@
 import json
 from flask import request, make_response
 from bot import app
-from bot.shared import client, validate_request
+from bot.shared import client
 from bot.tables import Practice
 from environment import ANNOUNCEMENTS_CID
+from bot.validate_request import validate_request
 
 
 @app.route("/slack/commands/practice", methods=["POST"])
-@validate_request
+@validate_request(is_admin_only=True)
 def practice():
     """Open a practice modal for the caller."""
     with open("bot/modals/practice.json") as f:

@@ -1,12 +1,12 @@
 import json
 from flask import request
 from bot import app
-from bot.shared import validate_request
+from bot.validate_request import validate_request
 from bot.tables import Player, Practice
 
 
 @app.route("/slack/options-load-endpoint", methods=["POST"])
-@validate_request
+@validate_request()
 def options_load():
     """Handle external_select payloads sent to app's /slack/options-load-endpoint url."""
     payload = json.loads(request.form["payload"])

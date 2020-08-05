@@ -4,13 +4,19 @@ from bot.shared import db
 class Player(db.Model):
     pid = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    is_admin = db.Column(db.Boolean, nullable=False)
+    admin = db.Column(db.Boolean, nullable=False)
     practices = db.relationship("Attendance", backref="player")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def is_admin(pid):
+        if player := Player.query.filter_by(pid=pid).first():
+            return player.admin
+        return False
 
 
 class Practice(db.Model):

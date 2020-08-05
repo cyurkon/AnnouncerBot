@@ -1,8 +1,9 @@
 import json
 from flask import make_response, request
 from bot import app
-from bot.shared import db, client, validate_request
+from bot.shared import db, client
 from bot.tables import Practice, Attendance
+from bot.validate_request import validate_request
 
 
 IV_URL = "bot/modals/mattend/initial_view.json"
@@ -13,7 +14,7 @@ DV_URL = "bot/modals/mattend/deleted_view.json"
 
 
 @app.route("/slack/commands/mattend", methods=["POST"])
-@validate_request
+@validate_request(is_admin_only=True)
 def manual_attendance():
     """Open the manual attendance modal for the caller."""
     with open(IV_URL) as f:
@@ -66,7 +67,7 @@ def update_mattend_modal(payload):
                 view["blocks"].append(json_load(WD_URL))
             else:
                 view["blocks"].append(json_load(TS_URL))
-        elif data["type"] == "external_select" and data["action_id"] == "time_select":
+        elif data["type"] == "external_select":
             # When a time is chosen, load the next view where attendance adjustments can be made.
             metadata["time"] = data["selected_option"]["value"]
             view = json_load(FV_URL)
@@ -82,7 +83,5 @@ def update_mattend_modal(payload):
     elif payload["type"] == "view_submission":
         values = payload["view"]["state"]["values"]
         metadata["pid"] = values["player_select"]["player_select"]["selected_option"]["value"]
-        metadata["status"] = values["attendance_select"]["attendance_select"]["selected_option"][
-            "value"
-        ]
+        metadata["status"] = values["status_select"]["status_select"]["selected_option"]["value"]
         submit_change(metadata)
