@@ -57,7 +57,7 @@ def update_mattend_modal(payload):
         view = {}
         data = payload["actions"][0]
         if data["type"] == "datepicker":
-            # When a date is chosen, display all practice time found for that date.
+            # When a date is chosen, display all practice times found for that date.
             # If none are found, display an error message.
             metadata["date"] = data["selected_date"]
             view = json_load(IV_URL)
