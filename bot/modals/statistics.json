@@ -1,0 +1,32 @@
+{
+	"type": "modal",
+	"callback_id": "/statistics",
+	"title": {
+		"type": "plain_text",
+		"text": "Attendance Data",
+		"emoji": true
+	},
+	"close": {
+		"type": "plain_text",
+		"text": "Close",
+		"emoji": true
+	},
+	"blocks": [
+		{
+			"type": "actions",
+			"block_id": ".txt",
+			"elements": [
+				{
+					"type": "button",
+					"action_id": ".txt",
+					"text": {
+						"type": "plain_text",
+						"text": "Generate report.txt",
+						"emoji": true
+					},
+					"value": ".txt"
+				}
+			]
+		}
+	]
+}

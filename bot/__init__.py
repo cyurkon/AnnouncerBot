@@ -16,6 +16,7 @@ import bot.slash_commands.attendance
 import bot.slash_commands.mattend
 import bot.slash_commands.practice
 import bot.slash_commands.upt
+import bot.slash_commands.statistics
 
 # You can add ENV="development" to this config but the Flask documentation
 # recommends you add it as an environmental variable.
