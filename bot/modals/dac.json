@@ -1,0 +1,86 @@
+{
+	"type": "modal",
+	"callback_id": "/dac",
+	"title": {
+		"type": "plain_text",
+		"text": "Database Admin Console",
+		"emoji": true
+	},
+	"close": {
+		"type": "plain_text",
+		"text": "Close",
+		"emoji": true
+	},
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": "This will add all workspace users to the Player table. It does NOT delete users already in the table.",
+				"emoji": true
+			}
+		},
+		{
+			"type": "actions",
+			"block_id": "upt",
+			"elements": [
+				{
+					"type": "button",
+					"action_id": "upt",
+					"text": {
+						"type": "plain_text",
+						"text": "Update Player Table",
+						"emoji": true
+					},
+					"value": "upt"
+				}
+			]
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": "This will clear the database and should only be done once at the start of each semester.",
+				"emoji": true
+			}
+		},
+		{
+			"type": "actions",
+			"block_id": "cd",
+			"elements": [
+				{
+					"type": "button",
+					"action_id": "cd",
+					"style": "danger",
+					"text": {
+						"type": "plain_text",
+						"text": "Clear Database",
+						"emoji": true
+					},
+					"value": "clear",
+					"confirm": {
+						"title": {
+							"type": "plain_text",
+							"text": "Are you sure?"
+						},
+						"text": {
+							"type": "mrkdwn",
+							"text": "This will be permanent."
+						},
+						"confirm": {
+							"type": "plain_text",
+							"text": "Confirm"
+						},
+						"deny": {
+							"type": "plain_text",
+							"text": "Cancel"
+						}
+					}
+				}
+			]
+		}
+	]
+}

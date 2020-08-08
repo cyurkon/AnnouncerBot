@@ -1,10 +1,12 @@
 import json
+
 from flask import make_response, request
 from tabulate import tabulate
+
 from bot import app
 from bot.shared import client
-from bot.validate_request import validate_request
 from bot.tables import Player, Practice
+from bot.validate_request import validate_request
 
 
 @app.route("/slack/commands/statistics", methods=["POST"])
@@ -27,10 +29,20 @@ def generate_statistics(payload):
                 f"{practice.date}\n{practice.time}"
                 for practice in Practice.query.order_by(Practice.date).all()
             ]
-            headers = ["\nName", "\nPractices Attended"] + header_practices
+            headers = [
+                "\nName",
+                "\nPractice Points",
+                "\nOutside Activities",
+                "Total\nPower Level",
+            ] + header_practices
             # Iterate through players and compare their attendance history to the headers.
             for player in Player.query.all():
-                row = [player.name, len(player.attendance)]
+                row = [
+                    player.name,
+                    player.get_practice_points(),
+                    player.num_activities,
+                    player.get_power_level(),
+                ]
                 attendance = {
                     f"{record.date}\n{record.time}": record.status for record in player.attendance
                 }

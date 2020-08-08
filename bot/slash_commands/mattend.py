@@ -1,8 +1,10 @@
 import json
+
 from flask import make_response, request
+
 from bot import app
-from bot.shared import db, client
-from bot.tables import Practice, Attendance
+from bot.shared import client, db
+from bot.tables import Attendance, Practice
 from bot.validate_request import validate_request
 
 

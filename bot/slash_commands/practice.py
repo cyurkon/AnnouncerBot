@@ -1,9 +1,11 @@
 import json
-from flask import request, make_response
+
+from flask import make_response, request
+
 from bot import app
+from environment import ANNOUNCEMENTS_CID
 from bot.shared import client
 from bot.tables import Practice
-from environment import ANNOUNCEMENTS_CID
 from bot.validate_request import validate_request
 
 

@@ -1,8 +1,10 @@
 import json
+
 from flask import request
+
 from bot import app
-from bot.validate_request import validate_request
 from bot.tables import Player, Practice
+from bot.validate_request import validate_request
 
 
 @app.route("/slack/options-load-endpoint", methods=["POST"])

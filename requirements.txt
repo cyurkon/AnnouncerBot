@@ -1,6 +1,7 @@
 black
 flask
-flask_sqlalchemy
+flask-executor
+flask-sqlalchemy
 pre-commit
 slackclient
 tabulate

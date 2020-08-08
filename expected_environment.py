@@ -11,3 +11,4 @@ SLACK_SIGNING_SECRET = "<your_token_here>"
 
 # Slack channel CIDs. These you can get from the url of the channel. It starts with a C.
 ANNOUNCEMENTS_CID = "<slack_channel_id>"
+WORKOUTS_CID = "<slack_channel_id>"

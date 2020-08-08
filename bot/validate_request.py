@@ -2,9 +2,11 @@ import hashlib
 import hmac
 from functools import wraps
 from time import time
-from flask import request
-from bot.tables import Player
+
+from flask import make_response, request
+
 from environment import SLACK_SIGNING_SECRET
+from bot.tables import Player
 
 
 def verify_signature(request_data, timestamp, signature):
@@ -39,11 +41,14 @@ def validate_request(is_admin_only=False):
         def wrapper():
             assert is_valid_request()
             if is_admin_only:
-                assert Player.is_admin(request.form.to_dict()["user_id"])
+                try:
+                    assert Player.is_admin(request.form.to_dict()["user_id"])
+                except AssertionError:
+                    return make_response("Maybe one day, kiddo.", 200)
             return func()
 
         # Neat trick to save the original function.
-        wrapper.unwrapped = func
+        # wrapper.unwrapped = func
         return wrapper
 
     return decorator
