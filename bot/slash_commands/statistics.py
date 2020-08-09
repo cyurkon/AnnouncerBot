@@ -1,4 +1,5 @@
 import csv
+import io
 
 from flask import make_response, request
 
@@ -24,7 +25,7 @@ def generate_statistics(caller):
         f"{practice.date}\n{practice.time}"
         for practice in Practice.query.order_by(Practice.date).all()
     ]
-    headers = ["Name", "Practice Points", "Outside Activities", "Total Power Level",] + practices
+    table.append(["Name", "Practice Points", "Outside Activities", "Total Power Level"] + practices)
     # Iterate through players and compare their attendance history to the headers.
     for player in Player.query.all():
         attendance = {
@@ -38,11 +39,12 @@ def generate_statistics(caller):
         ] + [attendance.get(practice, "Absent w/o Excuse") for practice in practices]
         table.append(row)
 
-    # DM caller with the file.
+    # Open DM with caller.
     channel = client.conversations_open(users=[caller])["channel"]["id"]
-    with open("report.csv", "w", newline="") as f:
-        wr = csv.writer(f, delimiter=",")
-        wr.writerow(headers)
-        wr.writerows(table)
-    with open("report.csv", "rb") as f:
-        client.files_upload(channels=channel, filename="report.csv", filetype="csv", file=f)
+    # Build CSV without using a file as an intermediary.
+    buffer = io.StringIO()
+    csv.writer(buffer).writerows(table)
+    file = buffer.getvalue().encode()
+    buffer.close()
+    # DM caller with the file.
+    client.files_upload(channels=channel, filename="report.csv", filetype="csv", file=file)

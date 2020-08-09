@@ -5,6 +5,7 @@ from flask import make_response, request
 from bot import client, db
 from bot.models import Attendance, Player, Practice
 from bot.slash_commands import slash_commands
+from bot.slash_commands.statistics import generate_statistics
 from bot.validate_request import validate_request
 
 
@@ -25,6 +26,7 @@ def update_database(payload):
             update_player_table()
         # User clicks "Clear Database"
         elif data["type"] == "button" and data["action_id"] == "cd":
+            generate_statistics(payload["user"]["id"])
             clear_database()
 
 

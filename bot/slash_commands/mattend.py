@@ -61,9 +61,9 @@ def delete_practice(metadata):
     db.session.commit()
 
 
-def json_load(URL):
+def json_load(url):
     """Create a Python dictionary from a JSON file."""
-    with open(URL) as f:
+    with open(url) as f:
         return json.load(f)
 
 
