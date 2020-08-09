@@ -6,7 +6,7 @@ from time import time
 from flask import make_response, request
 
 from environment import SLACK_SIGNING_SECRET
-from bot.tables import Player
+from bot.models import Player
 
 
 def verify_signature(request_data, timestamp, signature):

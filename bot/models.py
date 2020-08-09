@@ -1,4 +1,4 @@
-from bot.shared import db, POINTS
+from bot import db, POINTS
 
 
 class Attendance(db.Model):

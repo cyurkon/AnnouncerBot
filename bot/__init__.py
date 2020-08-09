@@ -2,31 +2,48 @@ import os
 
 from flask import Flask
 from flask_executor import Executor
+from flask_sqlalchemy import SQLAlchemy
+from slack import WebClient
 
-from bot.shared import db
+from environment import SLACK_BOT_TOKEN
 
-app = Flask(__name__)
-executor = Executor(app)
-# Do not move these imports. Flask requires all files that use route decorators to be imported AFTER the app is created.
-import bot.events
-import bot.options_load
+# These emojis will be tracked on practice announcements.
+EMOJIS = {
+    "michael_c_smile": "On Time",
+    "confused_conner": "Late w/ Excuse",
+    "sleepy_eric": "Absent w/ Excuse",
+    "gorilla": "Injured",
+}
+# Used for calculating practice points in attendance statistics.
+POINTS = {
+    "On Time": 1,
+    "Late w/ Excuse": 0.75,
+    "Late w/o Excuse": 0.5,
+    "Absent w/ Excuse": 0.25,
+    "Injured": 0.25,
+}
+client = WebClient(token=SLACK_BOT_TOKEN)
+db = SQLAlchemy()
+executor = Executor()
 
-# from bot.slash_commands import *
-# For some reason this wildcard import ignores the attendance and upt files (this might be a bug).
-# You can view this by uncommenting the code below and placing it after the imports.
-# import sys
-# print(sys.modules.keys())
-import bot.slash_commands.attendance
-import bot.slash_commands.mattend
-import bot.slash_commands.practice
-import bot.slash_commands.dac
-import bot.slash_commands.statistics
 
-# You can add ENV="development" to this config but the Flask documentation
-# recommends you add it as an environmental variable.
-app.config.update(
-    SQLALCHEMY_DATABASE_URI="sqlite:///" + os.getcwd() + "/tribeB.db",
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
-)
-db.init_app(app)
-db.create_all(app=app)
+def create_app():
+    app = Flask(__name__)
+    app.config.update(
+        SQLALCHEMY_DATABASE_URI="sqlite:///" + os.getcwd() + "/tribeB.db",
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    )
+
+    db.init_app(app)
+    db.create_all(app=app)
+    executor.init_app(app)
+
+    from bot.slash_commands import slash_commands
+
+    app.register_blueprint(slash_commands)
+
+    from bot.routes import routes
+
+    app.register_blueprint(routes)
+
+    return app

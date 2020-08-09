@@ -2,13 +2,13 @@ import json
 
 from flask import make_response, request
 
-from bot import app
-from bot.shared import client, db
-from bot.tables import Attendance, Player, Practice
+from bot import client, db
+from bot.models import Attendance, Player, Practice
+from bot.slash_commands import slash_commands
 from bot.validate_request import validate_request
 
 
-@app.route("/slack/commands/dac", methods=["POST"])
+@slash_commands.route("/dac", methods=["POST"])
 @validate_request(is_admin_only=True)
 def database_admin_console():
     """Open the database administrator console modal for the caller."""
@@ -50,5 +50,6 @@ def clear_database():
     Attendance.query.delete()
     Player.query.delete()
     Practice.query.delete()
+    # Reinsert all workspace users so that admins can continue to use the slash commands.
     update_player_table()
     db.session.commit()

@@ -2,12 +2,13 @@ import json
 
 from flask import make_response, request
 
-from bot import app
-from bot.shared import client, db
-from bot.tables import Attendance, Practice
+from bot import client, db
+from bot.models import Attendance, Player, Practice
+from bot.slash_commands import slash_commands
 from bot.validate_request import validate_request
 
 
+# The mattend modal has five different states.
 IV_URL = "bot/modals/mattend/initial_view.json"
 TS_URL = "bot/modals/mattend/time_select.json"
 WD_URL = "bot/modals/mattend/wrong_date.json"
@@ -15,7 +16,7 @@ FV_URL = "bot/modals/mattend/final_view.json"
 DV_URL = "bot/modals/mattend/deleted_view.json"
 
 
-@app.route("/slack/commands/mattend", methods=["POST"])
+@slash_commands.route("/mattend", methods=["POST"])
 @validate_request(is_admin_only=True)
 def manual_attendance():
     """Open the manual attendance modal for the caller."""
@@ -24,7 +25,24 @@ def manual_attendance():
     return make_response("", 200)
 
 
+def mattend_options_load(payload, options):
+    """Load options into select blocks. Called by the options-load endpoint."""
+    action_id = payload["action_id"]
+    if action_id == "time_select":
+        date = json.loads(payload["view"]["private_metadata"])["date"]
+        for practice in Practice.query.filter_by(date=date).all():
+            options["options"].append(
+                {"text": {"type": "plain_text", "text": practice.time}, "value": practice.time}
+            )
+    elif action_id == "player_select":
+        for player in Player.query.all():
+            options["options"].append(
+                {"text": {"type": "plain_text", "text": player.name}, "value": player.pid}
+            )
+
+
 def submit_change(metadata):
+    """Update the database according to the options chosen by the caller."""
     record = Attendance.query.filter_by(
         pid=metadata["pid"], date=metadata["date"], time=metadata["time"]
     ).first()
@@ -44,18 +62,21 @@ def delete_practice(metadata):
 
 
 def json_load(URL):
+    """Create a Python dictionary from a JSON file."""
     with open(URL) as f:
         return json.load(f)
 
 
 def update_mattend_modal(payload):
     """
-    Updates the /mattend modal as different options are selected.
+    Update the /mattend modal as different options are selected.
 
     Metadata can be passed between views using the "private_metadata" field.
+    This will contain the date, time, player (pid), and status chosen by the caller.
     """
     metadata = json.loads(payload["view"]["private_metadata"])
     if payload["type"] == "block_actions":
+        # view will contain one of the five mattend modal states as they are built.
         view = {}
         data = payload["actions"][0]
         if data["type"] == "datepicker":
@@ -72,10 +93,14 @@ def update_mattend_modal(payload):
         elif data["type"] == "external_select":
             # When a time is chosen, load the next view where attendance adjustments can be made.
             metadata["time"] = data["selected_option"]["value"]
+            records = Attendance.query.filter_by(date=metadata["date"], time=metadata["time"]).all()
             view = json_load(FV_URL)
-            view["blocks"][0]["text"][
-                "text"
-            ] = "Adjusting attendance for event on {date} at {time}.".format(**metadata)
+            # In this view, list the current attendance data for that practice.
+            text = "Adjusting attendance for event on {date} at {time}. \n\n Current attendees:\n".format(
+                **metadata
+            )
+            text += "\n".join([f"{record.player.name} -- {record.status}" for record in records])
+            view["blocks"][0]["text"]["text"] = text
         elif data["type"] == "button":
             # Delete event button pressed.
             delete_practice(metadata)
