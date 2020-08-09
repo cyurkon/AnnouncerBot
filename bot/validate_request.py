@@ -17,7 +17,7 @@ def verify_signature(request_data, timestamp, signature):
     return hmac.compare_digest(request_hash, signature)
 
 
-def is_valid_request():
+def is_from_slack():
     timestamp = request.headers.get("X-Slack-Request-Timestamp")
     if timestamp is None or abs(time() - int(timestamp)) > 60 * 5:
         return False
@@ -29,7 +29,7 @@ def is_valid_request():
 
 def validate_request(is_admin_only=False):
     """
-    Verify that incoming requests are from Slack and that caller has the correct permissions.
+    Verify that incoming requests are from Slack and that the caller has the correct permissions.
 
     All endpoints should have the @validate_request decorator attached, with is_admin_only set appropriately.
     Based on https://github.com/slackapi/python-slack-events-api/blob/main/slackeventsapi/server.py.
@@ -39,12 +39,9 @@ def validate_request(is_admin_only=False):
     def decorator(func):
         @wraps(func)
         def wrapper():
-            assert is_valid_request()
-            if is_admin_only:
-                try:
-                    assert Player.is_admin(request.form.to_dict()["user_id"])
-                except AssertionError:
-                    return make_response("Maybe one day, kiddo.", 200)
+            assert is_from_slack()
+            if is_admin_only and not Player.is_admin(request.form.to_dict()["user_id"]):
+                return make_response("Maybe one day, kiddo.", 200)
             return func()
 
         # Neat trick to save the original function.

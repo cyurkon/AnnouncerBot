@@ -13,7 +13,7 @@ from bot.validate_request import validate_request
 @validate_request(is_admin_only=True)
 def practice():
     """Open a practice modal for the caller."""
-    with open("bot/modals/practice.json") as f:
+    with open("bot/static/modals/practice.json") as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)
 

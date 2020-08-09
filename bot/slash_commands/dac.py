@@ -12,7 +12,7 @@ from bot.validate_request import validate_request
 @validate_request(is_admin_only=True)
 def database_admin_console():
     """Open the database administrator console modal for the caller."""
-    with open("bot/modals/dac.json") as f:
+    with open("bot/static/modals/dac.json") as f:
         client.views_open(trigger_id=request.form["trigger_id"], view=json.loads(f.read()))
     return make_response("", 200)
 
@@ -30,20 +30,20 @@ def update_database(payload):
 
 def update_player_table():
     """Insert all workspace users into the database's Player table."""
-    current_pids = [player.pid for player in Player.query.all()]
+    prev_pids = [player.pid for player in Player.query.all()]
     users = client.users_list()["members"]
     for user in users:
         pid = user["id"]
         if not user["is_bot"] and pid != "USLACKBOT" and not user["deleted"]:
             name = user["profile"]["real_name"]
             is_admin = user["is_admin"]
-            if pid not in current_pids:
+            if pid not in prev_pids:
                 Player(pid=pid, name=name, admin=is_admin)
             else:
                 prev = Player.query.filter_by(pid=pid).first()
                 prev.name = name
                 prev.admin = is_admin
-                db.session.commit()
+    db.session.commit()
 
 
 def clear_database():

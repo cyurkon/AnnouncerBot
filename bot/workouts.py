@@ -5,7 +5,7 @@ from environment import WORKOUTS_CID
 
 def track_workout(event):
     """
-    Increment a player's num_activities by one everytime they post in the #workouts channel.
+    Increment a player's num_activities by one every time they post in the #workouts channel.
 
     If the player mentions other users in their post, this function will also increment their
     num_activities.

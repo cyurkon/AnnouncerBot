@@ -1,5 +1,6 @@
 import json
 import requests
+
 from flask import make_response, request
 from sqlalchemy import exc
 
@@ -36,8 +37,8 @@ def take_attendance(resp_url):
                     Attendance(
                         pid=pid, date=practice.date, time=practice.time, status=status,
                     )
-                # If the user has already reacted with another emoji, ignore this one
-                # and send an error message.
+                # If the user already reacted with another emoji,
+                # ignore this one and send an error message.
                 except exc.IntegrityError:
                     db.session.rollback()
                     player = Player.query.filter_by(pid=pid).first()

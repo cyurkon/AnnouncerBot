@@ -9,11 +9,11 @@ from bot.validate_request import validate_request
 
 
 # The mattend modal has five different states.
-IV_URL = "bot/modals/mattend/initial_view.json"
-TS_URL = "bot/modals/mattend/time_select.json"
-WD_URL = "bot/modals/mattend/wrong_date.json"
-FV_URL = "bot/modals/mattend/final_view.json"
-DV_URL = "bot/modals/mattend/deleted_view.json"
+IV_URL = "bot/static/modals/mattend/initial_view.json"
+TS_URL = "bot/static/modals/mattend/time_select.json"
+WD_URL = "bot/static/modals/mattend/wrong_date.json"
+FV_URL = "bot/static/modals/mattend/final_view.json"
+DV_URL = "bot/static/modals/mattend/deleted_view.json"
 
 
 @slash_commands.route("/mattend", methods=["POST"])

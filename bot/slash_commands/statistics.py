@@ -11,7 +11,7 @@ from bot.validate_request import validate_request
 @slash_commands.route("/statistics", methods=["POST"])
 @validate_request(is_admin_only=True)
 def statistics():
-    """Open the statistics modal for the caller."""
+    """Generate attendance statistics for the caller."""
     caller = request.form.to_dict()["user_id"]
     executor.submit(generate_statistics, caller)
     return make_response("", 200)
@@ -24,12 +24,7 @@ def generate_statistics(caller):
         f"{practice.date}\n{practice.time}"
         for practice in Practice.query.order_by(Practice.date).all()
     ]
-    headers = [
-        "\nName",
-        "\nPractice Points",
-        "\nOutside Activities",
-        "Total\nPower Level",
-    ] + practices
+    headers = ["Name", "Practice Points", "Outside Activities", "Total Power Level",] + practices
     # Iterate through players and compare their attendance history to the headers.
     for player in Player.query.all():
         attendance = {
@@ -43,7 +38,7 @@ def generate_statistics(caller):
         ] + [attendance.get(practice, "Absent w/o Excuse") for practice in practices]
         table.append(row)
 
-    # Upload file to caller's DM.
+    # DM caller with the file.
     channel = client.conversations_open(users=[caller])["channel"]["id"]
     with open("report.csv", "w", newline="") as f:
         wr = csv.writer(f, delimiter=",")
