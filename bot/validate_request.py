@@ -1,18 +1,19 @@
 import hashlib
 import hmac
 from functools import wraps
+from os import environ
 from time import time
 
 from flask import make_response, request
 
-from environment import SLACK_SIGNING_SECRET
 from bot.models import Player
 
 
 def verify_signature(request_data, timestamp, signature):
     msg = str.encode("v0:" + str(timestamp) + ":") + request_data
     request_hash = (
-        "v0=" + hmac.new(str.encode(SLACK_SIGNING_SECRET), msg, hashlib.sha256).hexdigest()
+        "v0="
+        + hmac.new(str.encode(environ.get("SLACK_SIGNING_SECRET")), msg, hashlib.sha256).hexdigest()
     )
     return hmac.compare_digest(request_hash, signature)
 

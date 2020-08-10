@@ -1,5 +1,6 @@
 import json
 import requests
+from os import environ
 
 from flask import make_response, request
 from sqlalchemy import exc
@@ -8,7 +9,6 @@ from bot import client, db, executor, EMOJIS
 from bot.models import Attendance, Player, Practice
 from bot.slash_commands import slash_commands
 from bot.validate_request import validate_request
-from environment import ANNOUNCEMENTS_CID
 
 
 @slash_commands.route("/attendance", methods=["POST"])
@@ -24,9 +24,9 @@ def take_attendance(resp_url):
     """Iterate through all untracked practices and record emoji responses."""
     practices = Practice.query.filter_by(is_tracked=False).all()
     for practice in practices:
-        reactions = client.reactions_get(channel=ANNOUNCEMENTS_CID, timestamp=practice.timestamp)[
-            "message"
-        ].get("reactions", [])
+        reactions = client.reactions_get(
+            channel=environ.get("ANNOUNCEMENTS_CID"), timestamp=practice.timestamp
+        )["message"].get("reactions", [])
         for emoji, status in EMOJIS.items():
             # Retrieve all users that reacted with this emoji
             pids = next(

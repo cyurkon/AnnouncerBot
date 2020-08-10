@@ -1,6 +1,7 @@
+from os import environ
+
 from bot import client, db
 from bot.models import Player
-from environment import WORKOUTS_CID
 
 
 def track_workout(event):
@@ -19,4 +20,6 @@ def track_workout(event):
         if player := Player.query.filter_by(pid=pid).first():
             player.num_activities += 1
     db.session.commit()
-    client.chat_postEphemeral(channel=WORKOUTS_CID, user=event["user"], text="Workout tracked!")
+    client.chat_postEphemeral(
+        channel=environ.get("WORKOUTS_CID"), user=event["user"], text="Workout tracked!"
+    )

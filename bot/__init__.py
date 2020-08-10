@@ -1,11 +1,10 @@
-import os
+from os import getenv
 
 from flask import Flask
 from flask_executor import Executor
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from slack import WebClient
-
-from environment import SLACK_BOT_TOKEN
 
 # These emojis will be tracked on practice announcements.
 EMOJIS = {
@@ -22,21 +21,23 @@ POINTS = {
     "Absent w/ Excuse": 0.25,
     "Injured": 0.25,
 }
-client = WebClient(token=SLACK_BOT_TOKEN)
+client = WebClient(token=getenv("SLACK_BOT_TOKEN"))
 db = SQLAlchemy()
 executor = Executor()
+migrate = Migrate()
 
 
 def create_app():
     app = Flask(__name__)
-    app.config.update(
-        SQLALCHEMY_DATABASE_URI="sqlite:///" + os.getcwd() + "/tribeB.db",
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    )
+    if app.config["ENV"] == "production":
+        app.config.from_object("bot.config.ProdConfig")
+    elif app.config["ENV"] == "development":
+        app.config.from_object("bot.config.DevConfig")
 
     db.init_app(app)
     db.create_all(app=app)
     executor.init_app(app)
+    migrate.init_app(app, db)
 
     from bot.slash_commands import slash_commands
 

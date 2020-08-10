@@ -3,8 +3,9 @@ from bot import db, POINTS
 
 class Attendance(db.Model):
     pid = db.Column(db.String, db.ForeignKey("player.pid"), primary_key=True)
-    date = db.Column(db.String, db.ForeignKey("practice.date"), primary_key=True)
-    time = db.Column(db.String, db.ForeignKey("practice.time"), primary_key=True)
+    # Adjust this later: db.ForeignKey("practice.date")
+    date = db.Column(db.String, primary_key=True)
+    time = db.Column(db.String, primary_key=True)
     status = db.Column(db.String)
 
     def __init__(self, **kwargs):

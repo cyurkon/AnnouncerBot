@@ -1,4 +1,5 @@
 import json
+import os
 
 from flask import make_response, request
 
@@ -9,7 +10,6 @@ from bot.slash_commands.practice import submit_announcement
 from bot.slash_commands.statistics import generate_statistics
 from bot.routes import routes
 from bot.validate_request import validate_request
-from environment import WORKOUTS_CID
 
 
 @routes.route("/events", methods=["POST"])
@@ -33,7 +33,11 @@ def events():
     elif request and "event" in request.json:
         event = request.json["event"]
         # message was posted in #workouts channel
-        if event["type"] == "message" and event["text"] and event["channel"] == WORKOUTS_CID:
+        if (
+            event["type"] == "message"
+            and event["text"]
+            and event["channel"] == os.getenv("WORKOUTS_CID")
+        ):
             track_workout(event)
     # validates events url
     elif request and "challenge" in request.json:

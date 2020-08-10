@@ -1,5 +1,6 @@
 # Environment variables
 environment.py
+.env
 
 # IntelliJ .iml files
 *.iml

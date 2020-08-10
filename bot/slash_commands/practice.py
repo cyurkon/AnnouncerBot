@@ -1,8 +1,8 @@
 import json
+from os import environ
 
 from flask import make_response, request
 
-from environment import ANNOUNCEMENTS_CID
 from bot import client
 from bot.models import Practice
 from bot.slash_commands import slash_commands
@@ -49,5 +49,5 @@ def submit_announcement(payload):
     except KeyError:
         modal["comments"] = ""
     message = format_announcement(modal)
-    response = client.chat_postMessage(channel=ANNOUNCEMENTS_CID, text=message)
+    response = client.chat_postMessage(channel=environ.get("ANNOUNCEMENTS_CID"), text=message)
     Practice(timestamp=response["ts"], date=modal["date"], time=modal["time"])
