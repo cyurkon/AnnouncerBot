@@ -11,7 +11,7 @@ Makes announcements, takes attendance, and handles other miscellaneous tasks.
 7. Go to the `announcements` channel and click the "Add an app" button. Add your app.
 8. On the app's homepage, go to `Slash Commands` and add the appropriate endpoints. These can be found in `./bot/slash_commands`. The base url will be generated when you run ngrok. For example, running `ngrok http 3000` might generate the base url `http://ef0eb7abb91a.ngrok.io`. In that case, the request url for the /practice command would be `http://ef0eb7abb91a.ngrok.io/slack/commands/practice`.
 9. On the app's homepage, go to `Interactivity & Shortcuts`. Turn on interactivity and add the `/slack/events` endpoint. Then, add the `/slack/options-load-endpoint` under `Select Menus`.
-10. Make sure python 3.8 and pip are installed on your system.
+10. Make sure python 3.9 and pip are installed on your system.
 11. Install the required libraries: `pip3 install -r requirements.txt`.
 12. Configure black as a pre-commit hook: `pre-commit install`.
 
